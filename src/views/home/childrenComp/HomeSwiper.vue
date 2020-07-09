@@ -25,7 +25,13 @@
     components:{
       SwiperItem,
       Swiper
-    }
+    },
+    data(){
+      return{
+        isShow:false
+      }
+    },
+
   }
 </script>
 

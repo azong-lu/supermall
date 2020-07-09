@@ -1,6 +1,6 @@
 <template>
-  <div class="list-item">
-    <img :src="data.show.img" alt="">
+  <div class="list-item" @click="itemClick">
+    <img :src="data.show.img" alt="" @load="imageLoad">
     <div class="list-info">
       <p>{{data.title}}</p>
       <span class="price">{{data.price}}</span>
@@ -14,11 +14,21 @@
     name: "GoodListItem",
     props:{
       data:{
-        type:Array,
+        type:Object,
         default(){
-          return []
+          return {}
         }
+      },
+
+    },
+    methods:{
+      imageLoad(){
+        this.$bus.$emit('itemImageLoad')
+      },
+      itemClick(){
+        this.$router.push('/detail/'+this.data.iid)
       }
+
     }
   }
 </script>

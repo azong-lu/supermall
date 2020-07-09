@@ -1,10 +1,9 @@
 <template>
   <div>
-  <router-view></router-view>
- <div id="tab-bar">
- <maintab></maintab>
- </div>
-  </div>
+    <keep-alive exclude="Detail">
+     <router-view></router-view>
+   </keep-alive>
+   <maintab id="tab-bar"></maintab></div>
 </template>
 
 <script>

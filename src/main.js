@@ -8,3 +8,5 @@ new Vue({
   router,
   render: h => h(App),
 }).$mount('#app')
+//事件总线
+Vue.prototype.$bus = new Vue()

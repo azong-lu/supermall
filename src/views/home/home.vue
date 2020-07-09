@@ -1,59 +1,23 @@
 <template>
   <div id="home">
-<!--    <scroll class="wrapper">-->
-      <nav-bar class="home-nav">
-        <div slot="center">
-          购物街
-        </div>
-      </nav-bar>
-      <home-swiper :banners="banners"></home-swiper>
+    <nav-bar class="home-nav">
+      <div slot="center">
+        购物街
+      </div>
+    </nav-bar>
+    <scroll class="wrapper" ref="scroll"
+            :probe-type="3" :pull-up-loade="true"
+            @scroll="btnShow" @pullingUp="lodeMore"
+    >
+      <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view/>
-      <tab-contrl :titles="['流行', '新款', '精选']" class="home-tab" @itemclick="itemclick"/>
-      <goods-list :goods="getCurrentIndex"/>
-<!--    </scroll>-->
-    <ul>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-      <li>1</li>
-      <li>2</li>
-      <li>3</li>
-      <li>4</li>
-      <li>5</li>
-      <li>6</li>
-      <li>7</li>
-      <li>8</li>
-      <li>9</li>
-      <li>10</li>
-    </ul>
+      <tab-contrl :titles="['流行', '新款', '精选']"
+                  class="home-tab" @itemclick="itemclick"/>
+      <goods-list :goods="getCurrentType" />
+    </scroll>
+    <click-back @click.native="backClick" v-show="isShowBtn"/>
+
   </div>
 </template>
 
@@ -66,11 +30,15 @@
   import NavBar from "components/common/navbar/NavBar";
   import TabContrl from "components/content/tabcontrl/TabContrl";
   import GoodsList from "components/content/goods/GoodsList";
-
+  import ClickBack from "components/content/clickback/ClickBack";
+  import Scroll from "components/common/scroll/Scroll";
 
   import {getmultidata,getData} from "network/home";
 
-  import Scroll from "components/common/scroll/Scroll";
+  import {debounce} from "common/Utils";
+
+
+
 
   export default {
     name: "home",
@@ -82,6 +50,7 @@
       NavBar,
       TabContrl,
       GoodsList,
+      ClickBack,
       Scroll
     },
     data(){
@@ -93,17 +62,42 @@
           'new': {page: 0,list:[]},
           'sell': {page: 0,list:[]}
         },
-        currentType:'pop'
+        currentType:'pop',
+        isShowBtn:false,
+        tabContorlShow:false,
+        saveY:0
       }
     },
     created() {
-     this.getmultidata()
+      this.getmultidata()
       this.getData('pop')
       this.getData('new')
       this.getData('sell')
+
+
+    },
+    mounted() {
+      const loadRefresh = debounce(this.$refs.scroll.scrollRefresh,50)
+      this.$bus.$on('itemImageLoad',() => {
+        loadRefresh()
+    //    执行debound的返回函数
+    })
+    //  写在created中，可能无法找到scroll这个元素
+    },
+    activated() {
+      console.log('activated');
+      this.$refs.scroll.ScrollTo(0,this.saveY,0)
+      console.log(this.saveY);
+
+      this.$refs.scroll.scrollRefresh()
+    },
+    deactivated() {
+      console.log('deactivated');
+      this.saveY = this.$refs.scroll.getScrollY()
+      console.log(this.saveY);
     },
     computed:{
-      getCurrentIndex(){
+      getCurrentType(){
          return this.goods[this.currentType].list
       }
     },
@@ -119,24 +113,45 @@
             break
         }
       },
+      backClick(){
+        this.$refs.scroll.ScrollTo(0,0);
+      },
+      btnShow(position){
+        // console.log(position);
+        this.isShowBtn = (-position.y)>1000
+      },
+      lodeMore(){
+        this.getData(this.currentType)
+
+      },
+
+
+
+
 
       //数据请求
       getmultidata(){
         getmultidata().then((res) => {
-          console.log(res);
+          // console.log(res);
           this.banners = res.data.banner.list
           this.recommends=res.data.recommend.list
         })
       },
-      getData(type,){
+
+      getData(type){
         const page=this.goods[type].page+1;
         getData(type,page).then((res) => {
           const page=this.goods[type].page+1;
-          console.log(res);
+          // console.log(res);
+          // console.log(res.data.list);
           this.goods[type].list.push(...res.data.list)
           this.goods[type].page++
+
+          this.$refs.scroll.scrollFinish()
+
         })
-      }
+      },
+
     },
 
   }

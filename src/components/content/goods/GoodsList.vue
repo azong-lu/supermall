@@ -13,11 +13,14 @@
     },
     props:{
       goods:{
-        type:Object,
+        type:Array,
         default(){
-          return{}
+          return []
         }
       }
+    },
+    methods: {
+
     }
   }
 </script>
