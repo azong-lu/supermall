@@ -33,6 +33,7 @@
     methods:{
       itemClick(index){
         this.currentIndex = index
+        this.$emit('navClick',index)
       },
       back(){
         this.$router.go(-1)

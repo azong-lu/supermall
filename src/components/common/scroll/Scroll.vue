@@ -34,6 +34,7 @@
       //监听滚动位置
       this.scroll.on('scroll',(position) => {
         this.$emit('scroll',position)
+        // console.log('------');
       })
       //下拉加载更多
       this.scroll.on('pullingUp',() => {

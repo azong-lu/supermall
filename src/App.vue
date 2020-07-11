@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div id="app">
     <keep-alive exclude="Detail">
      <router-view></router-view>
    </keep-alive>
-   <maintab id="tab-bar"></maintab></div>
+   <maintab id="tab-bar"></maintab>
+  </div>
 </template>
 
 <script>
@@ -19,6 +20,10 @@ export default {
 
 <style>
   @import "assets/css/base.css";
+  #app{
+    width: 100%;
+    height: 100%;
+  }
   #tab-bar{
     background: #f6f6f6;
     display: flex;

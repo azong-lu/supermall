@@ -3,7 +3,7 @@ import Router from 'vue-router'
 const home = () => import('views/home/home')
 const category = () => import('views/category/category')
 const cart = () => import('views/cart/cart')
-const profile = () => import('views/profile/profile')
+const profile = () => import('views/profile/Profile')
 const detail = () => import('views/detail/Detail')
 
 Vue.use(Router)

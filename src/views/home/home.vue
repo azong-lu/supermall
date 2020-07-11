@@ -7,7 +7,7 @@
     </nav-bar>
     <scroll class="wrapper" ref="scroll"
             :probe-type="3" :pull-up-loade="true"
-            @scroll="btnShow" @pullingUp="lodeMore"
+             @pullingUp="lodeMore"
     >
       <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends"></recommend-view>
@@ -16,7 +16,7 @@
                   class="home-tab" @itemclick="itemclick"/>
       <goods-list :goods="getCurrentType" />
     </scroll>
-    <click-back @click.native="backClick" v-show="isShowBtn"/>
+<!--    <click-back @click.native="backClick" v-show="isShowBtn"/>-->
 
   </div>
 </template>
@@ -30,10 +30,11 @@
   import NavBar from "components/common/navbar/NavBar";
   import TabContrl from "components/content/tabcontrl/TabContrl";
   import GoodsList from "components/content/goods/GoodsList";
-  import ClickBack from "components/content/clickback/ClickBack";
+  // import ClickBack from "components/content/clickback/ClickBack";
   import Scroll from "components/common/scroll/Scroll";
 
   import {getmultidata,getData} from "network/home";
+  import {itemClickListener,clickBackLister} from 'common/mixin'
 
   import {debounce} from "common/Utils";
 
@@ -50,9 +51,11 @@
       NavBar,
       TabContrl,
       GoodsList,
-      ClickBack,
+      // ClickBack,
       Scroll
     },
+    //重复代码的混入
+    mixins:[itemClickListener,clickBackLister],
     data(){
       return{
         banners : [],
@@ -63,9 +66,9 @@
           'sell': {page: 0,list:[]}
         },
         currentType:'pop',
-        isShowBtn:false,
         tabContorlShow:false,
-        saveY:0
+        saveY:0,
+        // imageLoad:null
       }
     },
     created() {
@@ -77,24 +80,26 @@
 
     },
     mounted() {
-      const loadRefresh = debounce(this.$refs.scroll.scrollRefresh,50)
-      this.$bus.$on('itemImageLoad',() => {
-        loadRefresh()
-    //    执行debound的返回函数
-    })
-    //  写在created中，可能无法找到scroll这个元素
+      // const loadRefresh = debounce(this.$refs.scroll.scrollRefresh,50)
+      // this.imageLoad = () => {
+      //   loadRefresh()
+      // }
+      // this.$bus.$on('itemImageLoad',this.imageLoad)
+     //   执行debound的返回函数)
+     // 写在created中，可能无法找到scroll这个元素
     },
     activated() {
-      console.log('activated');
+      // console.log('activated');
       this.$refs.scroll.ScrollTo(0,this.saveY,0)
-      console.log(this.saveY);
+      // console.log(this.saveY);
 
       this.$refs.scroll.scrollRefresh()
     },
     deactivated() {
-      console.log('deactivated');
+      // console.log('deactivated');
       this.saveY = this.$refs.scroll.getScrollY()
-      console.log(this.saveY);
+      // console.log(this.saveY);
+      this.$bus.$off('itemImageLoad',this.imageLoads)
     },
     computed:{
       getCurrentType(){
@@ -113,13 +118,10 @@
             break
         }
       },
-      backClick(){
-        this.$refs.scroll.ScrollTo(0,0);
-      },
-      btnShow(position){
-        // console.log(position);
-        this.isShowBtn = (-position.y)>1000
-      },
+      // btnShow(position){
+      //   // console.log(position);
+      //   this.isShowBtn = (-position.y)>1000
+      // },
       lodeMore(){
         this.getData(this.currentType)
 
@@ -166,11 +168,7 @@
   .home-nav{
     background: var( --color-tint);
     color: white;
-    box-shadow: 0px 0px 1px rgba(100,100,100,0.1);
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
+    box-shadow: 0 0 1px rgba(100,100,100,0.1);
     z-index: 9;
   }
   .home-tab{
@@ -179,10 +177,11 @@
   }
   .wrapper{
     position: absolute;
-    top: 44px;
-    bottom: 49px;
+    top: 43px;
     right: 0;
+    bottom: 49px;
     left: 0;
+    overflow: hidden;
   }
 
 </style>
