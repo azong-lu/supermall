@@ -24,7 +24,7 @@
     computed:{
       showImage(){
         // return this.data.show.img || this.data.image
-        return this.data.image || this.data.show.img;
+        return this.data.img ||this.data.image || this.data.show.img;
       }
     },
     methods:{

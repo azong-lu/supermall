@@ -55,6 +55,8 @@
     //  保证调用方法时scroll已经挂载完成
       getScrollY(){
         return this.scroll? this.scroll.y:0
+        // return this.scroll? Math.abs(Math.round(this.scroll.y)):0
+
 
         // console.log('-----');
       }

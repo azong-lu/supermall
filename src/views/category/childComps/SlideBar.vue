@@ -17,12 +17,10 @@
 
 <script>
   import Scroll from "components/common/scroll/Scroll";
-  import SlideBarItem from "./SlideBarItem";
   export default {
     name: "SlideBar",
     components:{
       Scroll,
-      SlideBarItem
     },
     data(){
       return{
@@ -39,8 +37,12 @@
     },
     methods:{
       slideBarClick(item,index){
+        const obj = {
+          maitKey: item.maitKey,
+          index
+        }
         this.currentIndex = index
-        this.$emit('slideClick',item)
+        this.$emit('slideClick',obj)
       }
     }
   }
